@@ -22,9 +22,9 @@ jobs:
         with:
           # create a review app
           command: deploy
-          git_remote_url: 'ssh://dokku@15.237.10.169:22'
+          git_remote_url: 'ssh://dokku@15.237.10.169:22/klaradev'
           # specify a name for the review app
-          review_app_name: review-appname-${{ github.event.pull_request.number }}
+          review_app_name: klaradev-${{ github.event.pull_request.number }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
   destroy_review_app:
@@ -39,5 +39,5 @@ jobs:
           command: review-apps:destroy
           git_remote_url: 'ssh://dokku@15.237.10.169:22'
           # specify a name for the review app
-          review_app_name: review-appname-${{ github.event.pull_request.number }}
+          review_app_name: klaradev-${{ github.event.pull_request.number }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
