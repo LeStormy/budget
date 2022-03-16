@@ -17,6 +17,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
@@ -29,6 +34,13 @@ jobs:
             pwd
             ls -l
             ./deploy_branch.sh ${{ github.event.pull_request.number }}
+
+      - name: Push to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: 'ssh://dokku@15.237.10.169:22/appname'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          branch: ${{ steps.extract_branch.outputs.branch }}
           
   destroy_review_app:
     runs-on: ubuntu-latest
