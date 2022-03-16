@@ -24,7 +24,11 @@ jobs:
           username: dokku
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: deploy_branch.sh ${{ github.event.pull_request.number }}
+          script: |
+            whoami
+            pwd
+            ls -l
+            deploy_branch.sh ${{ github.event.pull_request.number }}
           
   destroy_review_app:
     runs-on: ubuntu-latest
