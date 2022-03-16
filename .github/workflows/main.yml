@@ -20,7 +20,9 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
-          host: dokku@15.237.10.169
+          host: 15.237.10.169
+          username: dokku
+          port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: deploy_branch.sh ${{ github.event.pull_request.number }}
           
