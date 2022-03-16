@@ -33,7 +33,7 @@ jobs:
             whoami
             pwd
             ls -l
-            echo "${{ steps.extract_branch.outputs.branch }}"
+            echo " ${{ github.head_ref }} "
             ./deploy_branch.sh ${{ github.event.pull_request.number }}
 
       - name: Dokku Deploy action
@@ -42,7 +42,7 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           dokku-host: 15.237.10.169
           app-name: klaradev-${{ github.event.pull_request.number }}
-          remote-branch: ${{ steps.extract_branch.outputs.branch }}
+          remote-branch: ${{ github.head_ref }}
 
       # - name: Push to dokku
       #   uses: dokku/github-action@master
