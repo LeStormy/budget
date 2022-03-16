@@ -33,14 +33,23 @@ jobs:
             whoami
             pwd
             ls -l
+            echo "${{ steps.extract_branch.outputs.branch }}"
             ./deploy_branch.sh ${{ github.event.pull_request.number }}
 
-      - name: Push to dokku
-        uses: dokku/github-action@master
+      - name: Dokku Deploy action
+        uses: idoberko2/dokku-deploy-github-action@v1
         with:
-          git_remote_url: ssh://dokku@${{ github.event.pull_request.number }}.dailybark.eu
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          branch: ${{ steps.extract_branch.outputs.branch }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          dokku-host: 15.237.10.169
+          app-name: klaradev-${{ github.event.pull_request.number }}
+          remote-branch: ${{ steps.extract_branch.outputs.branch }}
+
+      # - name: Push to dokku
+      #   uses: dokku/github-action@master
+      #   with:
+      #     git_remote_url: ssh://dokku@${{ github.event.pull_request.number }}.dailybark.eu
+      #     ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     branch: ${{ steps.extract_branch.outputs.branch }}
           
   destroy_review_app:
     runs-on: ubuntu-latest
