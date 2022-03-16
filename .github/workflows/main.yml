@@ -21,7 +21,7 @@ jobs:
         uses: dokku/github-action@master
         with:
           # create a review app
-          command: deploy
+          command: klaradev:create
           git_remote_url: 'ssh://dokku@15.237.10.169:22/klaradev'
           # specify a name for the review app
           review_app_name: klaradev-${{ github.event.pull_request.number }}
