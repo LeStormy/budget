@@ -17,16 +17,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Push to dokku
-        uses: dokku/github-action@master
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
         with:
-          # create a review app
-          command: klaradev:create
-          git_remote_url: 'ssh://dokku@15.237.10.169:22/klaradev'
-          # specify a name for the review app
-          review_app_name: klaradev-${{ github.event.pull_request.number }}
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-
+          host: dokku@15.237.10.169
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: deploy_branch.sh ${{ github.event.pull_request.number }}
+          
   destroy_review_app:
     runs-on: ubuntu-latest
     # only run when a pull request is closed
