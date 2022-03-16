@@ -38,7 +38,7 @@ jobs:
       - name: Push to dokku
         uses: dokku/github-action@master
         with:
-          git_remote_url: 'ssh://dokku@15.237.10.169:22/appname'
+          git_remote_url: ssh://dokku@15.237.10.169:klaradev-${{ github.event.pull_request.number }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: ${{ steps.extract_branch.outputs.branch }}
           
