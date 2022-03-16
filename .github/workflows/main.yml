@@ -28,7 +28,7 @@ jobs:
             whoami
             pwd
             ls -l
-            deploy_branch.sh ${{ github.event.pull_request.number }}
+            ./deploy_branch.sh ${{ github.event.pull_request.number }}
           
   destroy_review_app:
     runs-on: ubuntu-latest
