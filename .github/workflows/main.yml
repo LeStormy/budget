@@ -21,7 +21,7 @@ jobs:
         uses: dokku/github-action@master
         with:
           # create a review app
-          command: review-apps:create
+          command: deploy
           git_remote_url: 'ssh://dokku@15.237.10.169:22'
           # specify a name for the review app
           review_app_name: review-appname-${{ github.event.pull_request.number }}
