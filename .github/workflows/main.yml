@@ -59,6 +59,7 @@ jobs:
           dokku-host: 15.237.10.169
           app-name: klaradev-${{ github.event.pull_request.number }}
           remote-branch: ${{ github.head_ref }}
+          git-push-flags: --force
           
   destroy_review_app:
     runs-on: ubuntu-latest
