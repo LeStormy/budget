@@ -1,15 +1,12 @@
 ---
 name: 'deploy'
 
-# yamllint disable-line rule:truthy
 on:
-  # onl run this workflow on pull request events
   pull_request
 
 jobs:
-  review_app:
+  create_review_app:
     runs-on: ubuntu-latest
-    # only run when a pull request is opened
     if: github.event_name == 'pull_request' && github.event.action == 'opened'
     steps:
       - name: Cloning repo
@@ -17,12 +14,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
-
-      - name: executing remote ssh commands using password
+      - name: Create review app
         uses: appleboy/ssh-action@master
         with:
           host: 15.237.10.169
@@ -30,13 +22,9 @@ jobs:
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            whoami
-            pwd
-            ls -l
-            echo " ${{ github.head_ref }} "
             ./deploy_branch.sh ${{ github.event.pull_request.number }}
 
-      - name: Dokku Deploy action
+      - name: Deploy PR to review app
         uses: idoberko2/dokku-deploy-github-action@v1
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -44,24 +32,47 @@ jobs:
           app-name: klaradev-${{ github.event.pull_request.number }}
           remote-branch: ${{ github.head_ref }}
 
-      # - name: Push to dokku
-      #   uses: dokku/github-action@master
-      #   with:
-      #     git_remote_url: ssh://dokku@${{ github.event.pull_request.number }}.dailybark.eu
-      #     ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     branch: ${{ steps.extract_branch.outputs.branch }}
+  synchronize_review_app:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Cloning repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Update application with new changes
+        uses: idoberko2/dokku-deploy-github-action@v1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          dokku-host: 15.237.10.169
+          app-name: klaradev-${{ github.event.pull_request.number }}
+          remote-branch: ${{ github.head_ref }}
+          
+  populate_review_app:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+      - name: Populate database for new review app
+        uses: appleboy/ssh-action@master
+        with:
+          host: 15.237.10.169
+          username: dokku
+          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            dokku run klaradev-${{ github.event.pull_request.number }} rails db:seed
           
   destroy_review_app:
     runs-on: ubuntu-latest
     # only run when a pull request is closed
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     steps:
-      - name: Destroy the review app
-        uses: dokku/github-action@master
+       - name: Destroy review app
+        uses: appleboy/ssh-action@master
         with:
-          # destroy a review app
-          command: review-apps:destroy
-          git_remote_url: 'ssh://dokku@15.237.10.169:22/klaradev'
-          # specify a name for the review app
-          review_app_name: klaradev-${{ github.event.pull_request.number }}
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: 15.237.10.169
+          username: dokku
+          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            ./remove_branch.sh ${{ github.event.pull_request.number }}
