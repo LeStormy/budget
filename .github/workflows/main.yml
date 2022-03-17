@@ -52,6 +52,7 @@ jobs:
   populate_review_app:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    steps:
       - name: Populate database for new review app
         uses: appleboy/ssh-action@master
         with:
