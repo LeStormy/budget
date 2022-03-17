@@ -70,7 +70,7 @@ const LoginDesktop = ({
                 <Grid item xs={false} lg={2} />
                 <Grid item xs={12} lg={4}>
                   <Typography variant="h2" color="primary">
-                    Easy-Peasy Budget
+                    Easy-Peasy Budget 19
                   </Typography>
                   <MiniSpacer />
                   <Typography variant="h5">
