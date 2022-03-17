@@ -40,7 +40,8 @@ jobs:
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            dokku run klaradev-${{ github.event.pull_request.number }} rails db:seed
+            ls
+          # dokku run klaradev-${{ github.event.pull_request.number }} rails db:seed
           
   synchronize_review_app:
     runs-on: ubuntu-latest
