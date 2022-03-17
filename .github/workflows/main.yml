@@ -32,6 +32,16 @@ jobs:
           app-name: klaradev-${{ github.event.pull_request.number }}
           remote-branch: ${{ github.head_ref }}
 
+      - name: Populate database for new review app
+        uses: appleboy/ssh-action@master
+        with:
+          host: 15.237.10.169
+          username: dokku
+          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            dokku run klaradev-${{ github.event.pull_request.number }} rails db:seed
+          
   synchronize_review_app:
     runs-on: ubuntu-latest
     if: github.event.action == 'synchronize'
@@ -48,20 +58,6 @@ jobs:
           dokku-host: 15.237.10.169
           app-name: klaradev-${{ github.event.pull_request.number }}
           remote-branch: ${{ github.head_ref }}
-          
-  populate_review_app:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.action == 'opened'
-    steps:
-      - name: Populate database for new review app
-        uses: appleboy/ssh-action@master
-        with:
-          host: 15.237.10.169
-          username: dokku
-          port: 22
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            dokku run klaradev-${{ github.event.pull_request.number }} rails db:seed
           
   destroy_review_app:
     runs-on: ubuntu-latest
