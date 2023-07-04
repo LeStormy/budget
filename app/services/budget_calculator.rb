@@ -8,7 +8,7 @@ class BudgetCalculator
         startingYear = Time.now.year
         lastValue = 0
 
-        Array(startingYear..2030).each do |year|
+        Array(startingYear..2060).each do |year|
             Array(1..12).each do |month|
                 # If current year, skip to starting month
                 if (year == startingYear && month < startingMonth)
